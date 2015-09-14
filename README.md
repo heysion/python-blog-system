@@ -1,2 +1,2 @@
 # python-blog-system
-pbs is my python blog system
+pbsv is my python blog system backend 
