@@ -12,6 +12,9 @@ import json
 
 class BaseLoginHandler(tornado.web.RequestHandler):
     def get(self):
+        print("abc")
+        self.wirte("hello world!")
+        self.finash()
         pass
     def post(self):
         pass

@@ -22,7 +22,7 @@ class App(tornado.web.Application):
             cookie_secret="61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
         )
         handlers = [
-#            (r"/",None),
+#            (r"/",Index),
         ]
         self._redis_pool =  redis.ConnectionPool(host="127.0.0.1", port=6379, db=1)
         handlers.extend(sub_handlers)
