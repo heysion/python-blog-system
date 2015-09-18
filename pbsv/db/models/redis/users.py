@@ -1,8 +1,33 @@
 # -*- coding: utf-8 -*-
 
 import redis
+"""
+USERS
+	users:%name:uid #string
+        users:%name:safety #hash
+        users:%name:info #hash
+        users:%name:loginfo #hash
+	users:%name:email #string
+	users:%name:roles #list
+        users:%uid:sid #string
+        users:%sid:username #string
+users:%name:info
+        uid #string
+        sid #string
+        sex #string
+        age #string
+"""
+"""
+input : username
+return: userinfo
+"""
 get_users_info_lua = """
-
+local v_data = redis.call("HGETALL","users:"..KEYS[1]..":info");
+local result_set = {};
+for idx = 1 ,#v_data,2 do
+    result_set[v_data[idx]] = v_data[idx+1] ;
+end
+return cjson.encode(result_set) ;
 """
 class UserModel:
     def __init__(self,db=None,pool=None):
