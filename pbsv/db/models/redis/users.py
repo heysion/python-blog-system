@@ -17,18 +17,20 @@ users:%name:info
         sex #string
         age #string
 """
+
 """
 input : username
 return: userinfo
 """
 get_users_info_lua = """
-local v_data = redis.call("HGETALL","users:"..KEYS[1]..":info");
+local v_data = redis.call('HGETALL','users:' .. KEYS[1] .. ':info');
 local result_set = {};
 for idx = 1 ,#v_data,2 do
-    result_set[v_data[idx]] = v_data[idx+1] ;
+    result_set[v_data[idx]] = v_data[idx+1];
 end
-return cjson.encode(result_set) ;
+return cjson.encode(result_set);
 """
+
 class UserModel:
     def __init__(self,db=None,pool=None):
         self.db = db if db else redis.Redis(pool)
@@ -49,7 +51,6 @@ class UserModel:
         user_safety["uid"] = self.db.get("users:%s:uid"%(username))
         user_safety["safety"] = self.db.smembers("users:%s:safety"%(username))
         return user_safety if user_safety else None
-
 
 
 if __name__ == "__main__":
