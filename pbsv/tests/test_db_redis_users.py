@@ -14,24 +14,6 @@ end
 return cjson.encode(result_set);
 """
 
-def script_load(script):
-    sha = [None]
-    def call(conn, keys=[], args=[], force_eval=False):
-        if not force_eval:
-            if not sha[0]:
-                sha[0] = conn.execute_command(
-                    "SCRIPT", "LOAD", script, parse="LOAD")
-            try:
-                return conn.execute_command(
-                    "EVALSHA", sha[0], len(keys), *(keys+args))
-            except redis.exceptions.ResponseError as msg:
-                if not msg.args[0].startswith("NOSCRIPT"):
-                    raise
-            return conn.execute_command(
-                    "EVAL", script, len(keys), *(keys+args))
-            return call
-
-
 if __name__ == "__main__":
     # cmd = r'redis-cli -n 8 -h 192.168.10.2 SCRIPT LOAD "%s" ' %(get_users_info_lua)
     # print(cmd)
