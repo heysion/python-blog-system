@@ -22,7 +22,7 @@ users:%name:info
 input : username
 return: userinfo
 """
-get_users_info_lua = """
+users_info_lua = """
 local v_data = redis.call('HGETALL','users:' .. KEYS[1] .. ':info');
 local result_set = {};
 for idx = 1 ,#v_data,2 do
@@ -34,12 +34,16 @@ return cjson.encode(result_set);
 class UserModel:
     def __init__(self,db=None,pool=None):
         self.db = db if db else redis.Redis(pool)
+        self._UserSha = {}
         pass
-
+    def _init_user_info(self):
+        self._UserSha["user_info"] = users_info_lua
+        pass
     def getUserInfo(self,username):
         user_info = {}
-        user_info["uid"] = self.db.get("users:%s:uid"%(username))
-        user_info["info"] = self.db.smembers("users:%s:info"%(username))
+        user_info = db.execute_command("EVALSHA",self._UserSha["user_info"],1,username)
+        # user_info["uid"] = self.db.get("users:%s:uid"%(username))
+        # user_info["info"] = self.db.smembers("users:%s:info"%(username))
         return user_info if user_info else None
 
     def setUserInfo(self,username,userinfo):
