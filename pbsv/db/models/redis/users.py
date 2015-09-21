@@ -22,7 +22,7 @@ users:%name:info
 input : username
 return: userinfo
 """
-users_info_lua = """
+get_users_info_lua = """
 local v_data = redis.call('HGETALL','users:' .. KEYS[1] .. ':info');
 local result_set = {};
 for idx = 1 ,#v_data,2 do
@@ -30,18 +30,33 @@ for idx = 1 ,#v_data,2 do
 end
 return cjson.encode(result_set);
 """
+# uid #string
+# sid #string
+# sex #string
+# age #string
+
+set_users_info_lua = """
+local user_info = cjson.decode(KEYS[2]);
+for k, v in pairs(user_info) do
+    redis.call('HSET','users:' .. KEYS[1] .. ':info',k,v);
+end
+return 1
+"""
 
 class UserModel:
     def __init__(self,db=None,pool=None):
         self.db = db if db else redis.Redis(pool)
         self._UserSha = {}
+        self._init_user_info()
         pass
     def _init_user_info(self):
-        self._UserSha["user_info"] = users_info_lua
+        self._UserSha["get_user_info"] = self.db.execute_command("SCRIPT","LOAD",get_users_info_lua,parse="LOAD")
+        self._UserSha["set_user_info"] = self.db.execute_command("SCRIPT","LOAD",set_users_info_lua,parse="LOAD")
         pass
+
     def getUserInfo(self,username):
         user_info = {}
-        user_info = db.execute_command("EVALSHA",self._UserSha["user_info"],1,username)
+        user_info = self.db.execute_command("EVALSHA",self._UserSha["get_user_info"],1,username)
         # user_info["uid"] = self.db.get("users:%s:uid"%(username))
         # user_info["info"] = self.db.smembers("users:%s:info"%(username))
         return user_info if user_info else None
