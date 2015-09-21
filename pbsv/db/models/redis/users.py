@@ -62,7 +62,7 @@ class UserModel:
         return user_info if user_info else None
 
     def setUserInfo(self,username,userinfo):
-        user_info = {}
+        retmsg = self.db.execute_command("EVALSHA",self._UserSha["set_user_info"],1,username,json.dumps(userinfo))
         pass
 
     def getUserSafety(self,username):
