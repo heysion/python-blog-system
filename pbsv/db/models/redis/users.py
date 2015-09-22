@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import redis
+import json
+
 """
 USERS
 	users:%name:uid #string
@@ -36,7 +38,9 @@ return cjson.encode(result_set);
 # age #string
 
 set_users_info_lua = """
-local user_info = cjson.decode(KEYS[2]);
+print KEYS[2]
+local user_info = cjson.encode(KEYS[2]);
+print user_info
 for k, v in pairs(user_info) do
     redis.call('HSET','users:' .. KEYS[1] .. ':info',k,v);
 end

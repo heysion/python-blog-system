@@ -31,7 +31,7 @@ from pbsv.db.models.redis.users import UserModel
 
 class TestdbRedisUsers(unittest.TestCase):
     def setUp(self):
-        r = redis.Redis(host="192.168.10.2",port=6370,db=8)
+        r = redis.Redis(host="192.168.10.2",port=6379,db=8)
         self.users = UserModel(db=r)
     def test_set_user_info(self):
         self.users.setUserInfo("test",userinfo={"age":10,"sid":"1002","uid":"a111","sex":1})
