@@ -35,6 +35,9 @@ class TestdbRedisUsers(unittest.TestCase):
         self.users = UserModel(db=r)
     def test_set_user_info(self):
         self.users.setUserInfo("test",userinfo={"age":10,"sid":"1002","uid":"a111","sex":1})
+    def test_get_user_info(self):
+        self.users.getUserInfo("test")
+
 
 if __name__ == "__main__":
     unittest.main()
