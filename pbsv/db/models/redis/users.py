@@ -38,13 +38,11 @@ return cjson.encode(result_set);
 # age #string
 
 set_users_info_lua = """
-print KEYS[2]
-local user_info = cjson.encode(KEYS[2]);
-print user_info
+local user_info = cjson.decode(KEYS[2]);
 for k, v in pairs(user_info) do
     redis.call('HSET','users:' .. KEYS[1] .. ':info',k,v);
 end
-return 1
+return 1;
 """
 
 class UserModel:
@@ -66,7 +64,7 @@ class UserModel:
         return user_info if user_info else None
 
     def setUserInfo(self,username,userinfo):
-        retmsg = self.db.execute_command("EVALSHA",self._UserSha["set_user_info"],1,username,json.dumps(userinfo))
+        retmsg = self.db.execute_command("EVALSHA",self._UserSha["set_user_info"],2,username,r'%s'%(json.dumps(userinfo)))
         pass
 
     def getUserSafety(self,username):
