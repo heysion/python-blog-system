@@ -66,7 +66,24 @@ end
 return 1;
 """
 
-class UserModel:
+# USERS
+# 	users:%name:uid #string
+#         users:%name:safety #hash
+#         users:%name:info #hash
+#         users:%name:loginfo #hash
+# 	users:%name:email #string
+# 	users:%name:roles #list
+#         users:%uid:sid #string
+#         users:%sid:username #string
+class RedisType:
+    pass
+class UserModel(RedisType):
+    __namespace__="users:%ref1:%ref2"
+    username = RedisType(ref1=UserModel.uid,ref2="username",type="string")
+    uid = RedisType(ref1=UserModel.username,ref2="uid",type="string")
+    safety = RedisType(ref1=UserModel.username,ref2="safety",type="hash")
+    info = RedisType(ref1=UserModel.username,ref2="info",type="hash")
+
     def __init__(self,db=None,pool=None):
         self.db = db if db else redis.Redis(pool)
         self._UserSha = {}
@@ -83,8 +100,6 @@ class UserModel:
     def getUserInfo(self,username):
         user_info = {}
         user_info = self.db.execute_command("EVALSHA",self._UserSha["get_user_info"],1,username)
-        # user_info["uid"] = self.db.get("users:%s:uid"%(username))
-        # user_info["info"] = self.db.smembers("users:%s:info"%(username))
         return user_info if user_info else None
 
     def setUserInfo(self,username,userinfo):

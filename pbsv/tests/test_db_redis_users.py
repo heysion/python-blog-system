@@ -42,8 +42,6 @@ class TestdbRedisUsers(unittest.TestCase):
     def test_get_user_safety(self):
         print(self.users.getUserSafety("test"))
 
-
-
 if __name__ == "__main__":
     unittest.main()
     os.exit()
