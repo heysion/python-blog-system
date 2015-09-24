@@ -45,15 +45,39 @@ end
 return 1;
 """
 
+# users:%name:safety
+#         salt #string
+#         passwd #string
+#         authcode #string
+get_users_safety_lua = """
+local v_data = redis.call('HGETALL','users:' .. KEYS[1] .. ':safety');
+local result_set = {};
+for idx = 1 ,#v_data,2 do
+    result_set[v_data[idx]] = v_data[idx+1];
+end
+return cjson.encode(result_set);
+"""
+
+set_users_safety_lua = """
+local user_info = cjson.decode(KEYS[2]);
+for k, v in pairs(user_info) do
+    redis.call('HSET','users:' .. KEYS[1] .. ':safety',k,v);
+end
+return 1;
+"""
+
 class UserModel:
     def __init__(self,db=None,pool=None):
         self.db = db if db else redis.Redis(pool)
         self._UserSha = {}
-        self._init_user_info()
+        self._init_users_sha()
         pass
-    def _init_user_info(self):
+    def _init_users_sha(self):
         self._UserSha["get_user_info"] = self.db.execute_command("SCRIPT","LOAD",get_users_info_lua,parse="LOAD")
         self._UserSha["set_user_info"] = self.db.execute_command("SCRIPT","LOAD",set_users_info_lua,parse="LOAD")
+        self._UserSha["get_user_safety"] = self.db.execute_command("SCRIPT","LOAD",get_users_safety_lua,parse="LOAD")
+        self._UserSha["set_user_safety"] = self.db.execute_command("SCRIPT","LOAD",set_users_safety_lua,parse="LOAD")
+
         pass
 
     def getUserInfo(self,username):
@@ -69,9 +93,12 @@ class UserModel:
 
     def getUserSafety(self,username):
         user_safety = {}
-        user_safety["uid"] = self.db.get("users:%s:uid"%(username))
-        user_safety["safety"] = self.db.smembers("users:%s:safety"%(username))
+        user_safety = self.db.execute_command("EVALSHA",self._UserSha["get_user_safety"],1,username)
         return user_safety if user_safety else None
+
+    def setUserSafety(self,username,usersafety):
+        retmsg = self.db.execute_command("EVALSHA",self._UserSha["set_user_safety"],2,username,r'%s'%(json.dumps(usersafety)))
+        pass
 
 
 if __name__ == "__main__":
