@@ -78,7 +78,12 @@ class UserModel:
         self._UserSha["get_user_safety"] = self.db.execute_command("SCRIPT","LOAD",get_users_safety_lua,parse="LOAD")
         self._UserSha["set_user_safety"] = self.db.execute_command("SCRIPT","LOAD",set_users_safety_lua,parse="LOAD")
         pass
-
+    def setUserBase(self,username,email):
+        pass
+    def getUserBase(self,username):
+        pass
+    def checkUserName(self,username):
+        pass
     def getUserInfo(self,username):
         user_info = {}
         user_info = self.db.execute_command("EVALSHA",self._UserSha["get_user_info"],1,username)
