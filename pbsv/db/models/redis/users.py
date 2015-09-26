@@ -67,10 +67,25 @@ return 1;
 """
 
 class UserModel:
+    class Users:
+	uid = None #string
+        safety = {} #hash
+        info = {} #hash
+        loginfo = {}#hash
+	email = None #string
+	roles = [] #list
+        sid = None #string
+        username = None#string
+        uid = None #string
+        sid = None #string
+        sex = None #string
+        age = None#string
+
     def __init__(self,db=None,pool=None):
         self.db = db if db else redis.Redis(pool)
         self._UserSha = {}
         self._init_users_sha()
+        self._users = UserModel.Users
         pass
     def _init_users_sha(self):
         self._UserSha["get_user_info"] = self.db.execute_command("SCRIPT","LOAD",get_users_info_lua,parse="LOAD")
@@ -81,6 +96,8 @@ class UserModel:
     def setUserBase(self,username,email):
         rc = self.db.sismember("sys:username:list",username)
         if rc == 0:
+            self.db.sadd("sys:users:namelist",username)
+            self._users.uid = self.db.incr("sys:users:lastuid")
             pass
         else:
             return -1
