@@ -79,6 +79,11 @@ class UserModel:
         self._UserSha["set_user_safety"] = self.db.execute_command("SCRIPT","LOAD",set_users_safety_lua,parse="LOAD")
         pass
     def setUserBase(self,username,email):
+        rc = self.db.sismember("sys:username:list",username)
+        if rc == 0:
+            pass
+        else:
+            return -1
         pass
     def getUserBase(self,username):
         pass
