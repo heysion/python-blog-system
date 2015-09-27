@@ -2,6 +2,7 @@
 
 import redis
 import json
+import uuid
 
 """
 USERS
@@ -68,18 +69,23 @@ return 1;
 
 class UserModel:
     class Users:
-	uid = None #string
-        safety = {} #hash
+        safety = {} #hash #
+""""
+salt #string
+passwd #string
+authcode #string
+"""
         info = {} #hash
         loginfo = {}#hash
-	email = None #string
+
 	roles = [] #list
         sid = None #string
-        username = None#string
         uid = None #string
-        sid = None #string
+        username = None#string
+        email = None #string
         sex = None #string
         age = None#string
+        status = -1
 
     def __init__(self,db=None,pool=None):
         self.db = db if db else redis.Redis(pool)
@@ -98,6 +104,9 @@ class UserModel:
         if rc == 0:
             self.db.sadd("sys:users:namelist",username)
             self._users.uid = self.db.incr("sys:users:lastuid")
+            self._users.username = username
+            self._users.safety["salt"]= uuid.uuid4().hex
+            self._users.status = -1 # not set passwd
             pass
         else:
             return -1
