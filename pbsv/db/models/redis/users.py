@@ -86,6 +86,19 @@ age = None#string
         username = None#string
         email = None #string
         status = -1
+        def setUserBase(self,username,email):
+            rc = self.db.sismember("sys:username:list",username)
+            if rc == 0:
+                self.db.sadd("sys:users:namelist",username)
+                self._users["uid"] = self.db.incr("sys:users:lastuid")
+                self._users.username = username
+                self._users.safety["salt"]= uuid.uuid4().hex
+                self._users.status = -1 # not set passwd
+                self._users.email = email
+                pass
+            else:
+                return -1
+            pass
 
     def __init__(self,db=None,pool=None):
         self.db = db if db else redis.Redis(pool)
@@ -95,22 +108,9 @@ age = None#string
         pass
     def _init_users_sha(self):
         self._UserSha["get_user_info"] = self.db.execute_command("SCRIPT","LOAD",get_users_info_lua,parse="LOAD")
-        self._UserSha["set_user_info"] = self.db.execute_command("SCRIPT","LOAD",set_users_info_lua,parse="LOAD")
+        self._UserSha["set_user_info"n] = self.db.execute_command("SCRIPT","LOAD",set_users_info_lua,parse="LOAD")
         self._UserSha["get_user_safety"] = self.db.execute_command("SCRIPT","LOAD",get_users_safety_lua,parse="LOAD")
         self._UserSha["set_user_safety"] = self.db.execute_command("SCRIPT","LOAD",set_users_safety_lua,parse="LOAD")
-        pass
-    def setUserBase(self,username,email):
-        rc = self.db.sismember("sys:username:list",username)
-        if rc == 0:
-            self.db.sadd("sys:users:namelist",username)
-            self._users["uid"] = self.db.incr("sys:users:lastuid")
-            self._users.username = username
-            self._users.safety["salt"]= uuid.uuid4().hex
-            self._users.status = -1 # not set passwd
-            self._users.email = email
-            pass
-        else:
-            return -1
         pass
     def getUserBase(self,username):
         pass
