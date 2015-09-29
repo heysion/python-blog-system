@@ -10,6 +10,29 @@ import tornado.web
 import pdb
 import json
 
+class HandlerBase(tornado.web.RequestHandler):
+    def initialize(self):
+        self.no_error = False
+        self.req_json = {}
+
+    def http_buffer_to_json(self):
+        print self.request.body
+        if len(self.request.body):
+            try:
+                self.no_error = True
+                self.req_json = json.loads(self.request.body)
+            except ValueError, e:
+                self.no_error = False
+                print e
+            except KeyError, e:
+                self.no_error = False
+                print e
+            except AttributeError, e:
+                self.no_error = False
+                print e
+            finally:
+                pass
+
 class BaseLoginHandler(tornado.web.RequestHandler):
     def get(self):
         print("abc")
@@ -19,13 +42,13 @@ class BaseLoginHandler(tornado.web.RequestHandler):
     def post(self):
         pass
 
-class MainLoginHandler(BaseLoginHandler):
+class MainLoginHandler(HandlerBase):
     def get(self):
         pass
     def post(self):
         pass
 
-class LoginHandler(BaseLoginHandler):
+class LoginHandler(HandlerBase):
     def get(self):
         pass
     def post(self):
@@ -38,10 +61,36 @@ class LogoutHandler(tornado.web.RequestHandler):
         pass
 
 
-class RegisterHandler(tornado.web.RequestHandler):
+class RegisterHandler(HandlerBase):
     def get(self):
         pass
+
     def post(self):
+        self.http_buffer_to_json()
+        username = self.req_json.get('username')
+        #username = self.get_argument('username')
+        password = self.req_json.get('password')
+        #password = self.get_argument('password')
+        if not username or not password:
+            data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
+            data_json = json.dumps(data)
+            self.write(data_json)
+            return self.redirect('/user/login')
+        else:
+            userfunc = UserModels(username, password)
+            #result = UserModels.checkuser(username, password)
+            result = userfunc.login()
+            if result:
+                self.set_secure_cookie("user", userfunc._username)
+                data = {'retcode': 200, 'retmsg': 'Login successed!'}
+                data_json = json.dumps(data)
+                self.write(data_json)
+                return self.redirect('/user')
+            else:
+                data = {'retcode': 404, 'retmsg': 'Username or password is wrong!'}
+                data_json = json.dumps(data)
+                self.write(data_json)
+                return self.redirect('/user/login')
         pass
 
 class PasswordHandler(tornado.web.RequestHandler):
