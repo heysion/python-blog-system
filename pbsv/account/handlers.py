@@ -68,18 +68,17 @@ class RegisterHandler(HandlerBase):
     def post(self):
         self.http_buffer_to_json()
         username = self.req_json.get('username')
-        #username = self.get_argument('username')
         password = self.req_json.get('password')
-        #password = self.get_argument('password')
         if not username or not password:
             data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
             data_json = json.dumps(data)
             self.write(data_json)
             return self.redirect('/user/login')
         else:
-            userfunc = UserModels(username, password)
-            #result = UserModels.checkuser(username, password)
-            result = userfunc.login()
+#            users_models = UserModels(username,password)
+#            userfunc = UserModels(username, password)
+#            result = userfunc.login()
+            result = 0
             if result:
                 self.set_secure_cookie("user", userfunc._username)
                 data = {'retcode': 200, 'retmsg': 'Login successed!'}
