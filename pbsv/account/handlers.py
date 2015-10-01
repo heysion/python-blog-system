@@ -81,7 +81,7 @@ class RegisterHandler(HandlerBase):
             result = 0
             if result:
                 self.set_secure_cookie("user", userfunc._username)
-                data = {'retcode': 200, 'retmsg': 'Login successed!'}
+                data = {'retcode': 200, 'retmsg': 'Register successed!'}
                 data_json = json.dumps(data)
                 self.write(data_json)
                 return self.redirect('/user')
