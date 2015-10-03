@@ -99,7 +99,6 @@ class RegisterHandler(HandlerBase):
             return self.redirect('/user/login')
         else:
             users_models = UserModels(username,password)
-#            userfunc = UserModels(username, password)
             result = users_models.create()
             result = 0
             if result:
@@ -109,7 +108,7 @@ class RegisterHandler(HandlerBase):
                 self.write(data_json)
                 return self.redirect('/user')
             else:
-                data = {'retcode': 404, 'retmsg': 'Username or password is wrong!'}
+                data = {'retcode': 404, 'retmsg': 'Create new account error!'}
                 data_json = json.dumps(data)
                 self.write(data_json)
                 return self.redirect('/user/login')
