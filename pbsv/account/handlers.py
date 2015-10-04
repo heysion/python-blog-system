@@ -96,7 +96,7 @@ class RegisterHandler(HandlerBase):
             data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
             data_json = json.dumps(data)
             self.write(data_json)
-            return self.redirect('/user/login')
+            return self.redirect('/user/register')
         else:
             users_models = UserModels(username,password)
             result = users_models.create()
@@ -111,7 +111,7 @@ class RegisterHandler(HandlerBase):
                 data = {'retcode': 404, 'retmsg': 'Create new account error!'}
                 data_json = json.dumps(data)
                 self.write(data_json)
-                return self.redirect('/user/login')
+                return self.redirect('/user/register')
         pass
 
 class PasswordHandler(tornado.web.RequestHandler):
