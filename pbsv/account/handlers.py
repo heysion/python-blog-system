@@ -79,6 +79,29 @@ class LoginHandler(HandlerBase):
 
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
+        self.http_buffer_to_json()
+        username = self.req_json.get('username')
+        password = self.req_json.get('password')
+        if not username or not password:
+            data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
+            data_json = json.dumps(data)
+            self.write(data_json)
+            return self.redirect('/user/login')
+        else:
+            users_models = UserModels(username,password)
+            result = users_models.logout()
+            result = 0
+            if result:
+                self.set_secure_cookie("user", users_models._username)
+                data = {'retcode': 200, 'retmsg': 'Register successed!'}
+                data_json = json.dumps(data)
+                self.write(data_json)
+                return self.redirect('/user')
+            else:
+                data = {'retcode': 404, 'retmsg': 'Create new account error!'}
+                data_json = json.dumps(data)
+                self.write(data_json)
+                return self.redirect('/user/login')
         pass
     def post(self):
         pass
