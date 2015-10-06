@@ -66,15 +66,15 @@ class LoginHandler(HandlerBase):
             result = 0
             if result:
                 self.set_secure_cookie("user", users_models._username)
-                data = {'retcode': 200, 'retmsg': 'Login successed!'}
+                data = {'retcode': 200, 'retmsg': 'Logout successed!'}
                 data_json = json.dumps(data)
                 self.write(data_json)
-                return self.redirect('/user')
+                return self.redirect('/')
             else:
-                data = {'retcode': 404, 'retmsg': 'Username or password is wrong!'}
+                data = {'retcode': 404, 'retmsg': 'Logout error!'}
                 data_json = json.dumps(data)
                 self.write(data_json)
-                return self.redirect('/user/login')
+                return self.redirect('/user/logout')
         pass
 
 class LogoutHandler(tornado.web.RequestHandler):
