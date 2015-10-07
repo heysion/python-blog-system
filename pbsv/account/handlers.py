@@ -33,15 +33,6 @@ class HandlerBase(tornado.web.RequestHandler):
             finally:
                 pass
 
-class BaseLoginHandler(tornado.web.RequestHandler):
-    def get(self):
-        print("abc")
-        self.wirte("hello world!")
-        self.finash()
-        pass
-    def post(self):
-        pass
-
 class MainLoginHandler(HandlerBase):
     def get(self):
         pass
@@ -77,7 +68,7 @@ class LoginHandler(HandlerBase):
                 return self.redirect('/user/logout')
         pass
 
-class LogoutHandler(tornado.web.RequestHandler):
+class LogoutHandler(HandlerBase):
     def get(self):
         self.http_buffer_to_json()
         username = self.req_json.get('username')
