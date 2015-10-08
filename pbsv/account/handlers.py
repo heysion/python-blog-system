@@ -128,10 +128,23 @@ class RegisterHandler(HandlerBase):
                 return self.redirect('/user/register')
         pass
 
-class PasswordHandler(tornado.web.RequestHandler):
+class PasswordHandler(HandlerBase):
     def get(self):
         pass
     def post(self):
+        self.http_buffer_to_json()
+        username = self.req_json.get('username')
+        password = self.req_json.get('password')
+        new_password = self.req_json.get('password2')
+        if not username or not password:
+            data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
+            data_json = json.dumps(data)
+            self.write(data_json)
+            return self.redirect('/user/register')
+        else:
+            users_ = UserModels(username,password)
+            result = users_models.modify_passwd(new_password)
+            result = 0
         pass
 
 
