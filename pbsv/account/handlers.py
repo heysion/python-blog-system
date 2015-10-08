@@ -33,15 +33,6 @@ class HandlerBase(tornado.web.RequestHandler):
             finally:
                 pass
 
-class BaseLoginHandler(tornado.web.RequestHandler):
-    def get(self):
-        print("abc")
-        self.wirte("hello world!")
-        self.finash()
-        pass
-    def post(self):
-        pass
-
 class MainLoginHandler(HandlerBase):
     def get(self):
         pass
@@ -52,10 +43,56 @@ class LoginHandler(HandlerBase):
     def get(self):
         pass
     def post(self):
+        self.http_buffer_to_json()
+        username = self.req_json.get('username')
+        password = self.req_json.get('password')
+        if not username or not password:
+            data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
+            data_json = json.dumps(data)
+            self.write(data_json)
+            return self.redirect('/user/login')
+        else:
+            users_models = UserModels(username,password)
+            result = users_models.login()
+            result = 0
+            if result:
+                self.set_secure_cookie("user", users_models._username)
+                data = {'retcode': 200, 'retmsg': 'Logout successed!'}
+                data_json = json.dumps(data)
+                self.write(data_json)
+                return self.redirect('/')
+            else:
+                data = {'retcode': 404, 'retmsg': 'Logout error!'}
+                data_json = json.dumps(data)
+                self.write(data_json)
+                return self.redirect('/user/logout')
         pass
 
-class LogoutHandler(tornado.web.RequestHandler):
+class LogoutHandler(HandlerBase):
     def get(self):
+        self.http_buffer_to_json()
+        username = self.req_json.get('username')
+        password = self.req_json.get('password')
+        if not username or not password:
+            data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
+            data_json = json.dumps(data)
+            self.write(data_json)
+            return self.redirect('/user/login')
+        else:
+            users_models = UserModels(username,password)
+            result = users_models.logout()
+            result = 0
+            if result:
+                self.set_secure_cookie("user", users_models._username)
+                data = {'retcode': 200, 'retmsg': 'Register successed!'}
+                data_json = json.dumps(data)
+                self.write(data_json)
+                return self.redirect('/user')
+            else:
+                data = {'retcode': 404, 'retmsg': 'Create new account error!'}
+                data_json = json.dumps(data)
+                self.write(data_json)
+                return self.redirect('/user/login')
         pass
     def post(self):
         pass
@@ -68,35 +105,46 @@ class RegisterHandler(HandlerBase):
     def post(self):
         self.http_buffer_to_json()
         username = self.req_json.get('username')
-        #username = self.get_argument('username')
         password = self.req_json.get('password')
-        #password = self.get_argument('password')
         if not username or not password:
             data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
             data_json = json.dumps(data)
             self.write(data_json)
-            return self.redirect('/user/login')
+            return self.redirect('/user/register')
         else:
-            userfunc = UserModels(username, password)
-            #result = UserModels.checkuser(username, password)
-            result = userfunc.login()
+            users_models = UserModels(username,password)
+            result = users_models.create()
+            result = 0
             if result:
-                self.set_secure_cookie("user", userfunc._username)
-                data = {'retcode': 200, 'retmsg': 'Login successed!'}
+                self.set_secure_cookie("user", users_models._username)
+                data = {'retcode': 200, 'retmsg': 'Register successed!'}
                 data_json = json.dumps(data)
                 self.write(data_json)
                 return self.redirect('/user')
             else:
-                data = {'retcode': 404, 'retmsg': 'Username or password is wrong!'}
+                data = {'retcode': 404, 'retmsg': 'Create new account error!'}
                 data_json = json.dumps(data)
                 self.write(data_json)
-                return self.redirect('/user/login')
+                return self.redirect('/user/register')
         pass
 
-class PasswordHandler(tornado.web.RequestHandler):
+class PasswordHandler(HandlerBase):
     def get(self):
         pass
     def post(self):
+        self.http_buffer_to_json()
+        username = self.req_json.get('username')
+        password = self.req_json.get('password')
+        new_password = self.req_json.get('password2')
+        if not username or not password:
+            data = {'retcode': 404, 'retmsg': 'Missing parameters!'}
+            data_json = json.dumps(data)
+            self.write(data_json)
+            return self.redirect('/user/register')
+        else:
+            users_ = UserModels(username,password)
+            result = users_models.modify_passwd(new_password)
+            result = 0
         pass
 
 
