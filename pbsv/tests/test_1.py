@@ -1,8 +1,12 @@
-class DBKeyError:
+class DBError:
     def __init__(self,str):
         self.__error_str = str
     def __str__(self):
         return self.__error_str
+
+class DBKeyError(DBError):
+    pass
+
 class DBRegion:
     __name__ = "top"
     def __init__(self,zonename):
@@ -12,6 +16,13 @@ class DBRegion:
         # if(zonename == None) raise DBKeyError("not found zone name")
         pass
 
+class DBType:
+    def __init__(self,keyname):
+        raise DBKeyError("not found key name")
+
+class DBTypeString(DBType):
+    def __init__(self,keyname):
+        pass
 
 class Test:
     class t2:
