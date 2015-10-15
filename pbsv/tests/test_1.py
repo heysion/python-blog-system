@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import pdb
 
 class PBError(object):
     def __init__(self,str):
@@ -13,30 +14,30 @@ class PBErrorDB(PBError):
     pass
 
 class PBType(object):
-    _type = "dbtype"
+    Type = "dbtype"
     def __init__(self,keyname):
         raise PBErrorKey("not found key name")
 
     @property
     def type(self):
-        return self._type
+        return self.__class__.Type
+
+    def __str__(self):
+        return self.Type
+
 
 class PBTypeString(PBType):
-    _type = "dbstring"
+    Type = "dbstring"
     def __init__(self,keyname):
         pass
-    def __str__(self):
-        return self._type
-    def __str__():
-        return PBTypeString._type
 
 class PBTypeHash(PBType):
-    _type = "dbhash"
+    Type = "dbhash"
     def __init__(self,keyname):
         pass
 
 class DBRegion(object):
-    __name__ = "top"
+    __region_name__ = "top"
     def __init__(self,zonename):
         if(zonename == None):
             zonename == __name__
@@ -45,7 +46,7 @@ class DBRegion(object):
 
     def search(self,pb,keyname=None,function=None,data=None):
         if(pb.db == None):raise PBErrorDB("data base unconfigure")
-        if(pb.type == PBTypeString.type):
+        if(pb.type == PBTypeString.Type):
             return db.get(keyname)
         pass
 
@@ -65,5 +66,6 @@ if __name__ == "__main__":
     print(t2.type)
     t3 = PBTypeHash("ab")
     print(t3.type)
-    print(PBTypeHash.type)
+    print(PBTypeString.Type)
+    pdb.set_trace()
 
