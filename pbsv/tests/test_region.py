@@ -37,12 +37,16 @@ class PBTypeHash(PBType):
         pass
 
 class DBRegion(object):
-    __region_name__ = "top"
+    __space_name__ = "top"
     def __init__(self,zonename):
         if(zonename == None):
-            zonename == __name__
+            zonename == __space_name__
         self._zone_name = zonename
         pass
+
+    @property
+    def zone_name(self,zonename):
+        self._zone_name = zonename
 
     def search(self,pb,keyname=None,function=None,data=None):
         if(pb.db == None):raise PBErrorDB("data base unconfigure")
@@ -50,3 +54,21 @@ class DBRegion(object):
             return db.get(keyname)
         pass
 
+    def init(self):
+        pass
+
+class TestTop1(DBRegion):
+    # def __init__(self):
+    #     super(TestTop1,self).__init__(zonename="sys")
+
+    def init(self):
+        pass
+
+    def print_name(self):
+        print  self._zone_name
+
+if __name__ == "__main__":
+    t1 = TestTop1("ac")
+    t1.print_name()
+    pdb.set_trace()
+    pass
