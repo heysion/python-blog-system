@@ -38,10 +38,11 @@ class PBTypeHash(PBType):
 
 class DBRegion(object):
     __space_name__ = "top"
-    def __init__(self,zonename):
+    def __init__(self,zonename=None):
         if(zonename == None):
-            zonename == __space_name__
-        self._zone_name = zonename
+            self._zone_name = self.__class__.__space_name__
+        else:
+            self._zone_name = zonename
         pass
 
     @property
@@ -58,9 +59,7 @@ class DBRegion(object):
         pass
 
 class TestTop1(DBRegion):
-    # def __init__(self):
-    #     super(TestTop1,self).__init__(zonename="sys")
-
+    __space_name__ = "sys"
     def init(self):
         pass
 
@@ -68,7 +67,6 @@ class TestTop1(DBRegion):
         print  self._zone_name
 
 if __name__ == "__main__":
-    t1 = TestTop1("ac")
+    t1 = TestTop1()
     t1.print_name()
-    pdb.set_trace()
     pass
