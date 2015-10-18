@@ -43,7 +43,13 @@ class DBRegion(object):
             self._zone_name = self.__class__.__space_name__
         else:
             self._zone_name = zonename
-        pass
+
+    def _space_pre_name(self):
+        if(issubclass(self,object)):
+            print("False")
+        else:
+            print("true")
+        self._space_pre = "%s:"%(self._zone_name)
 
     @property
     def zone_name(self,zonename):
@@ -64,7 +70,7 @@ class TestTop1(DBRegion):
         pass
 
     def print_name(self):
-        print  self._zone_name
+        print(self._zone_name)
 
 if __name__ == "__main__":
     t1 = TestTop1()
